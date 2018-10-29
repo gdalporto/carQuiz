@@ -14,24 +14,26 @@ const STORE = {
 function welcomeHeader() {
     return `
     <div class='header-container'>
-    <h1 class='topTitle'>Test your knowledge of high performance sports cars.</h1>
+        <h1 class='topTitle'>Test your knowledge of high performance sports cars.</h1>
     </div>`;
 };
 
 function welcomeBody() {
     return `
-    <div class='introduction-container'>
-    <div class='intro'>
-        <h2 class='introduction-text'>
-            Welcome to the world famous quiz where car afficionados test their knowledge of the most elite sports cars in the world. 
-        </h2>
-    </div>
-    <div class='introduction-button'>
-        <form  action="index.html">
-            <div class='submit-button'>
-                <button type="submit" class='submitButton' >Start</button>    
-            </div>     
-    </form>`
+    <div class='introduction-container main-container'>
+        <div class='intro'>
+            <h2 class='introduction-text'>
+                Welcome to the world famous quiz where car afficionados test their knowledge of the most elite sports cars in the world. 
+            </h2>
+        </div>
+        <div class='introduction-button'>
+            <form  action="index.html">
+                <div class='submit-button'>
+                    <button type="submit" class='submitButton' >Start</button>    
+                </div>     
+            </form>
+        </div>
+    </div>`
 };
 
 function quizHeader(){
@@ -42,6 +44,7 @@ function quizHeader(){
     <div class='header-container'>
         <h1 class='topTitle'>Test your knowledge of high performance sports cars.</h1>
         <p class='numberCorrect'>Correct Answers: ${numCorrect} out of ${outOf}</p>
+        <p class='questionProgress'>You are on question ${STORE.currentQuestion} out of ${STORE.questions.length}</p>
     </div>
     <div class='after-submit'>
     </div>
@@ -52,7 +55,7 @@ function quizHeader(){
 function quizBody(){
     let questionNumber = STORE.currentQuestion;
     return `
-    <div class='survey-container'>
+    <div class='survey-container main-container'>
         <form action = "Answer.html" class='question-form'>
             <div class='question-text'>
                 <h2 class='question'>${questionNumber}) ${STORE.questions[questionNumber-1][0]}</h2>
@@ -104,19 +107,17 @@ function bodyHTMLAnswer() {
     let correctAnswer = STORE.questions[thisQuestion-1][6];
     if(STORE.questions[thisQuestion-1][8]==true){
         rightWrong="Correct";
-        console.log(rightWrong);
     }
     else { 
         rightWrong="Incorrect";
-        console.log(rightWrong);
     }
     return `
-    <div class='response'>
+    <div class='response main-container'>
        <div class='answer-check'>
            <h2>${rightWrong}. The ${STORE.questions[thisQuestion-1][correctAnswer]} is the correct answer.</h2>
        </div>
        <div class='answer-image'>
-           <img id='car-response' src="${STORE.questions[thisQuestion-1][7]}">
+           <img id='car-response' alt='Image of ${STORE.questions[thisQuestion-1][correctAnswer]}' src="${STORE.questions[thisQuestion-1][7]}">
        </div>
     <form action="Finish.html">
         <div class='submit-button'>
@@ -126,6 +127,7 @@ function bodyHTMLAnswer() {
     </div>`;
          
 }
+
 
 function endHeader(){
 
@@ -138,7 +140,7 @@ function endHeader(){
 
 function endBody(){
     return`
-    <div class='finish-body'>
+    <div class='finish-body main-container'>
         <h2>If you would like to take the quiz again, please click "Retry" below.</h2>
     <form action="index.html">
         <div class='submit-button'>
@@ -159,7 +161,6 @@ function welcome() {
     $('.mainjs').html(bodyHTMLWelcome);
     $('.submitButton').on('click',function(event){
         event.preventDefault();
-        console.log("intro button clicked");
         takeQuiz();
     });
 };
@@ -168,10 +169,7 @@ function welcome() {
 function parseCorrect(){
     let correctCount=0;
     let lenn=STORE.questions.length;
-    console.log(lenn);
     for(let i=0;i<=(lenn-1);i++){
-//        console.log(i);
-        console.log(STORE.questions[i][8]);
         if(STORE.questions[i][8]){
             correctCount=correctCount + 1;
         };
@@ -187,13 +185,17 @@ function takeQuiz() {
     $('.mainjs').html(bodyHTMLQuiz);
     $('.SubmitButton').on('click',function(event){
         event.preventDefault();
-        answerPage(event);
+        if($("input[name='carType']:checked").val()==undefined){
+            takeQuiz();
+        }
+        else {
+            answerPage(event);
+        };
     });
 };
 
 
 function evaluateResponse(radioValue){
-    console.log("Evaluating Response");
     let thisQuestion = STORE.currentQuestion;
     if(STORE.questions[thisQuestion-1][6]==radioValue){
         STORE.questions[thisQuestion-1][8]=true;
@@ -220,7 +222,6 @@ function answerPage(event) {
 }
 
 function endQuiz() {
-    console.log("END OF QUIZ");
     const headerHTMLEnd=endHeader();
     const bodyHTMLEnd=endBody();
     $('.headerjs').html(headerHTMLEnd);
@@ -229,7 +230,6 @@ function endQuiz() {
 
 
 function startQuiz() {
-    console.log("quiz started");
     welcome();
 };
 
